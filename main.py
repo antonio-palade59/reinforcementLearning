@@ -51,6 +51,10 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT]:
             self.rect.x += self.speed
 
+        # Prevent player from going off screen
+
+        self.rect.x = max(0, min(self.rect.x, SCREEN_WIDTH - self.rect.width))
+
         # Handle jumping
         if self.on_ground and keys[pygame.K_SPACE]:
             self.velocity = self.jump_power
