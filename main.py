@@ -91,29 +91,42 @@ class Platform(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+import math  # Import math for sine wave calculations
+
 class Flag(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        # Initialize the surface and set a transparent background
-        self.image = pygame.Surface((100, 100), pygame.SRCALPHA)  # Make the surface transparent
-
-        # Draw the flagpole (black rectangle)
-        self.pole_width = 10
+        self.width = 50
+        self.height = 80
+        self.pole_width = 5
         self.pole_height = 80
-        pygame.draw.rect(self.image, (0, 0, 0), (0, 0, self.pole_width, self.pole_height))  # Black pole
+        self.flag_width = 30
+        self.flag_height = 30
+        self.animation_time = 0  # Time counter for animation
+        self.x = x
+        self.y = y - self.pole_height
+        self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
-        # Draw the triangle (half the height of the pole)
-        triangle_height = self.pole_height // 2  # Half the height of the pole
+    def update(self):
+        self.animation_time += 0.1  # Controls animation speed
+
+        # Calculate wave offset using sine function
+        wave_offset = math.sin(self.animation_time) * 5  # Adjust amplitude
+
+        # Clear previous image
+        self.image.fill((0, 0, 0, 0))  # Transparent background
+
+        # Draw flagpole
+        pygame.draw.rect(self.image, (0, 0, 0), (0, 0, self.pole_width, self.pole_height))
+
+        # Draw waving flag (triangle with moving tip)
         pygame.draw.polygon(self.image, (255, 0, 0), [
-            (self.pole_width, 0),  # Top of the pole (right side)
-            (self.pole_width + self.pole_height, triangle_height),  # Bottom right of the triangle
-            (self.pole_width, triangle_height)  # Bottom left of the triangle
+            (self.pole_width, 10),  # Fixed base
+            (self.pole_width + self.flag_width + wave_offset, 25),  # Waving tip
+            (self.pole_width, 40)  # Fixed bottom
         ])
 
-        # Set the rectangle for positioning the flag
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y - self.pole_height  # Position the flag to stand on the platform
 
 def main():
     player = Player()
@@ -154,6 +167,7 @@ def main():
         # Update player and check collisions
         player.update(level_completed)
         player.handle_collisions(platforms)
+        flag.update()
 
         # Collision with the flag (level completion)
         if pygame.sprite.spritecollide(player, flags, False):
