@@ -39,7 +39,11 @@ class Player(pygame.sprite.Sprite):
         self.jump_power = -15
         self.on_ground = False
 
-    def update(self):
+    def update(self, level_completed):
+
+        if level_completed:
+            return
+        
         # Handle movement
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -148,7 +152,7 @@ def main():
                 sys.exit()
 
         # Update player and check collisions
-        player.update()
+        player.update(level_completed)
         player.handle_collisions(platforms)
 
         # Collision with the flag (level completion)
