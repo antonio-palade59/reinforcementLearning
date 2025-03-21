@@ -98,6 +98,9 @@ class Platform(pygame.sprite.Sprite):
 import math  # Import math for sine wave calculations
 
 class Flag(pygame.sprite.Sprite):
+
+
+    
     def __init__(self, x, y):
         super().__init__()
         self.width = 50
@@ -112,7 +115,11 @@ class Flag(pygame.sprite.Sprite):
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
-    def update(self):
+    def update(self, level_completed):
+        
+        if level_completed:
+            return
+        
         self.animation_time += 0.1  # Controls animation speed
 
         # Calculate wave offset using sine function
@@ -171,7 +178,7 @@ def main():
         # Update player and check collisions
         player.update(level_completed)
         player.handle_collisions(platforms)
-        flag.update()
+        flag.update(level_completed)
 
         # Collision with the flag (level completion)
         if pygame.sprite.spritecollide(player, flags, False):
